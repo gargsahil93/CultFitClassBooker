@@ -47,8 +47,8 @@ public class ScheduledBookingTask {
 	@Scheduled(cron = "1 0 22 * * ?")
 	public void bookClassesInAdvance() {
 
-		Request request = buildRequestGet(String.format(CultFitURLs.URL_CLASSES_FOR_CENTER, ConfigUtils.getCenter()), ConfigUtils.getKey(),
-				ConfigUtils.getCookie());
+		Request request = buildRequestGet(String.format(CultFitURLs.URL_CLASSES_FOR_CENTER, ConfigUtils.getCenter()), System.getenv("apikey"),
+				System.getenv("cookie"));
 
 		Response response = null;
 		try {
@@ -61,7 +61,7 @@ public class ScheduledBookingTask {
 			if (classIdsOrdered!=null && classIdsOrdered != Collections.EMPTY_LIST) {
 				for (String classId : classIdsOrdered) {
 					Request bookRequest = buildRequestPost(String.format(CultFitURLs.URL_BOOK_CLASS, classId),
-							ConfigUtils.getKey(), ConfigUtils.getCookie(), "{}");
+							System.getenv("apikey"), System.getenv("cookie"), "{}");
 					try {
 						response = client.newCall(bookRequest).execute();
 						if (response.code() == 200) {
