@@ -46,6 +46,7 @@ public class ScheduledBookingTask {
 
 	@Scheduled(cron = "1 0 22 * * ?")
 	public void bookClassesInAdvance() {
+		logger.info("Initiating booking classes on " + (new java.util.Date()).toString());
 
 		Request request = buildRequestGet(String.format(CultFitURLs.URL_CLASSES_FOR_CENTER, ConfigUtils.getCenter()), System.getenv("apikey"),
 				System.getenv("cookie"));
