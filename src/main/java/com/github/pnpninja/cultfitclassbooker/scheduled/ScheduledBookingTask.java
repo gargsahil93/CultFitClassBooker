@@ -46,15 +46,16 @@ public class ScheduledBookingTask {
 
 	@Scheduled(cron = "1 0 22 * * ?")
 	public void bookClassesInAdvance() {
-		logger.info("Initiating booking classes on " + (new java.util.Date()).toString());
+		logger.info("Initiating booking");
 
 		Request request = buildRequestGet(String.format(CultFitURLs.URL_CLASSES_FOR_CENTER, ConfigUtils.getCenter()), System.getenv("apikey"),
 				System.getenv("cookie"));
 
 		Response response = null;
 		try {
+			logger.info("Sending initial request");
 			response = client.newCall(request).execute();
-			// logger.info(response.body().string());
+			logger.info("Got initial response");
 			Map<String, Object> cultClassesData = convertJsonStringToHashMap(response.body().string());
 			List<String> classIdsOrdered = getIDsOfPreferredClassAndTiming(ConfigUtils.getPreferredClasses(),
 					ConfigUtils.getPreferredTimings(), cultClassesData, ConfigUtils.getBookingDays());
@@ -66,6 +67,7 @@ public class ScheduledBookingTask {
 					try {
 						response = client.newCall(bookRequest).execute();
 						if (response.code() == 200) {
+							logger.info("Yay!! Class booked successfully");
 							break;
 						}
 					} catch (IOException e) {
